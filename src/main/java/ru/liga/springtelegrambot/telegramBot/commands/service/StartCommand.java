@@ -2,6 +2,8 @@ package ru.liga.springtelegrambot.telegramBot.commands.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -17,13 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Component
 public class StartCommand extends ServiceCommand {
 
     @Autowired
     private FeignRegistry feignRegistry;
 
-    public StartCommand(String identifier, String description) {
+    public StartCommand(@Value("start") String identifier, @Value("Старт") String description, FeignRegistry feignRegistry) {
         super(identifier, description);
+        this.feignRegistry = feignRegistry;
     }
 
     @Override
@@ -39,9 +43,11 @@ public class StartCommand extends ServiceCommand {
                                     0L,
                                     0L);
             Long anyName = feignRegistry.setProfile(profile);
+            if (!anyName.equals(chat.getId())) {
+                log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chat.getId()), anyName);
+            }
             userSettings.setState("menu");
         }
-        log.info(Bot.getUserSettings(chat.getId()).toString());
         String userName = Utils.getUserName(user);
 
         List<KeyboardRow> keyboardRowList = new ArrayList<>();

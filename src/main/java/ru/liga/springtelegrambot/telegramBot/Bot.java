@@ -12,6 +12,7 @@ import ru.liga.springtelegrambot.telegramBot.commands.operation.*;
 import ru.liga.springtelegrambot.telegramBot.commands.service.HelpCommand;
 import ru.liga.springtelegrambot.telegramBot.commands.service.StartCommand;
 import ru.liga.springtelegrambot.telegramBot.config.BotConfig;
+import ru.liga.springtelegrambot.telegramBot.controller.feign.FeignRegistry;
 import ru.liga.springtelegrambot.telegramBot.utils.Settings;
 
 import java.util.HashMap;
@@ -30,12 +31,12 @@ public class Bot extends TelegramLongPollingCommandBot {
     @Getter
     private static Map<Long, Settings> userSettings;
 
-    public Bot(BotConfig config) {
+    public Bot(BotConfig config, FeignRegistry feignRegistry) {
         super();
         BOT_NAME = config.getBotName();
         BOT_TOKEN = config.getBotToken();
 
-        register(new StartCommand("start", "Старт"));
+        register(new StartCommand("start", "Старт", feignRegistry));
         register(new HelpCommand("help", "Помощь"));
         register(new MenuCommand("menu", "Меню"));
         register(new ProfileCommand("profile", "Анкета"));
