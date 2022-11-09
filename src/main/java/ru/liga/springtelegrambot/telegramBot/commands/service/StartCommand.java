@@ -44,7 +44,7 @@ public class StartCommand extends ServiceCommand {
                                     0L);
             Long anyName = feignRegistry.setProfile(profile);
             if (!anyName.equals(chat.getId())) {
-                log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chat.getId()), anyName);
+                log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chat.getId(), anyName));
             }
             userSettings.setState("menu");
         }
