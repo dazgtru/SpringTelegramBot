@@ -25,7 +25,7 @@ public class Bot extends TelegramLongPollingCommandBot {
     private final String BOT_TOKEN;
 
     @Getter
-    private static final Settings defaultSettings = new Settings();
+    private static final Settings defaultSettings = new Settings("-");
 
     @Getter
     private static Map<Long, Settings> userSettings;

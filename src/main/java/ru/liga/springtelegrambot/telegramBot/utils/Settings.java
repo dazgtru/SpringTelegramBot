@@ -1,8 +1,12 @@
 package ru.liga.springtelegrambot.telegramBot.utils;
 
-import org.springframework.stereotype.Component;
+import lombok.Data;
 
-@Component
+@Data
 public class Settings {
-    String state;
+    private String state;
+
+    public Settings(String state) {
+        this.state = state;
+    }
 }
