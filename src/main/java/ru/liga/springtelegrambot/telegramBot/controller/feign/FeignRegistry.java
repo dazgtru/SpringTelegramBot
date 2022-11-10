@@ -11,5 +11,5 @@ import ru.liga.springtelegrambot.telegramBot.data.Profile;
 public interface FeignRegistry {
 
     @PostMapping("users")
-    public Long setProfile(@RequestBody Profile profile);
+    Long setProfile(@RequestBody Profile profile);
 }

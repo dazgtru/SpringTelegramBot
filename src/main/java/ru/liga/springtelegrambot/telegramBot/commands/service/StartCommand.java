@@ -22,10 +22,11 @@ import java.util.List;
 @Component
 public class StartCommand extends ServiceCommand {
 
-    @Autowired
-    private FeignRegistry feignRegistry;
+    private final FeignRegistry feignRegistry;
 
-    public StartCommand(@Value("start") String identifier, @Value("Старт") String description, FeignRegistry feignRegistry) {
+    public StartCommand(@Value("start") String identifier,
+                        @Value("Старт") String description,
+                        @Autowired FeignRegistry feignRegistry) {
         super(identifier, description);
         this.feignRegistry = feignRegistry;
     }
@@ -36,18 +37,21 @@ public class StartCommand extends ServiceCommand {
         if (userSettings.getState().equals("-")) {
             //register
             Profile profile = new Profile(2L,
-                                    "Lena",
-                                    "Сударыня",
-                                    "описание анкеты второго пользователя, лол",
-                                    "Сударь",
-                                    0L,
-                                    0L);
+                    "Lena",
+                    "Сударыня",
+                    "описание анкеты второго пользователя, лол",
+                    "Сударь",
+                    0L,
+                    0L);
+            profile.setChatId(chat.getId());
             Long anyName = feignRegistry.setProfile(profile);
             if (!anyName.equals(chat.getId())) {
                 log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chat.getId(), anyName));
             }
             userSettings.setState("menu");
         }
+
+
         String userName = Utils.getUserName(user);
 
         List<KeyboardRow> keyboardRowList = new ArrayList<>();

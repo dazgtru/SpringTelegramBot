@@ -1,5 +1,7 @@
 package ru.liga.springtelegrambot.telegramBot.commands.service;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -10,9 +12,10 @@ import ru.liga.springtelegrambot.telegramBot.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HelpCommand extends ServiceCommand{
-
-    public HelpCommand(String identifier, String description) {
+@Component
+public class HelpCommand extends ServiceCommand {
+    public HelpCommand(@Value("help") String identifier,
+                       @Value("Помощь") String description) {
         super(identifier, description);
     }
 
