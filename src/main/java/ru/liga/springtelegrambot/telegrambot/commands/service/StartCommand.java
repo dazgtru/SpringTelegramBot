@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegramBot.commands.service;
+package ru.liga.springtelegrambot.telegrambot.commands.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +9,11 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.bots.AbsSender;
-import ru.liga.springtelegrambot.telegramBot.Bot;
-import ru.liga.springtelegrambot.telegramBot.controller.feign.FeignRegistry;
-import ru.liga.springtelegrambot.telegramBot.data.Profile;
-import ru.liga.springtelegrambot.telegramBot.utils.Settings;
-import ru.liga.springtelegrambot.telegramBot.utils.Utils;
+import ru.liga.springtelegrambot.telegrambot.Bot;
+import ru.liga.springtelegrambot.telegrambot.client.feign.FeignRegistry;
+import ru.liga.springtelegrambot.telegrambot.data.Profile;
+import ru.liga.springtelegrambot.telegrambot.utils.Settings;
+import ru.liga.springtelegrambot.telegrambot.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,11 @@ public class StartCommand extends ServiceCommand {
         Settings userSettings = Bot.getUserSettings(chat.getId());
         if (userSettings.getState().equals("-")) {
             //register
+            //Сервис по работе с профилями.
             Profile profile = new Profile(2L,
                     "Lena",
                     "Сударыня",
-                    "описание анкеты второго пользователя, лол",
+                    "Анкета пользователя зарегистрированного в телеграмме.",
                     "Сударь",
                     0L,
                     0L);

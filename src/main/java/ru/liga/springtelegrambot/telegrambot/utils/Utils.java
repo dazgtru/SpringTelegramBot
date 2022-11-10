@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegramBot.utils;
+package ru.liga.springtelegrambot.telegrambot.utils;
 
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;

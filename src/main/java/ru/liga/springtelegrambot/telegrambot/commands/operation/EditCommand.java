@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegramBot.commands.service;
+package ru.liga.springtelegrambot.telegrambot.commands.operation;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -7,15 +7,16 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.bots.AbsSender;
-import ru.liga.springtelegrambot.telegramBot.utils.Utils;
+import ru.liga.springtelegrambot.telegrambot.commands.service.ServiceCommand;
+import ru.liga.springtelegrambot.telegrambot.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class HelpCommand extends ServiceCommand {
-    public HelpCommand(@Value("help") String identifier,
-                       @Value("Помощь") String description) {
+public class EditCommand extends ServiceCommand {
+    public EditCommand(@Value("edit") String identifier,
+                       @Value("Редактировать") String description) {
         super(identifier, description);
     }
 
@@ -26,12 +27,11 @@ public class HelpCommand extends ServiceCommand {
         List<KeyboardRow> keyboardRowList = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
 
-        keyboardFirstRow.add(new KeyboardButton("/search"));
-        keyboardFirstRow.add(new KeyboardButton("/profile"));
-        keyboardFirstRow.add(new KeyboardButton("/lovers"));
+        keyboardFirstRow.add(new KeyboardButton("/edit"));
+        keyboardFirstRow.add(new KeyboardButton("/menu"));
         keyboardRowList.add(keyboardFirstRow);
 
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
-                "Команда /help", keyboardRowList);
+                "Command /edit", keyboardRowList);
     }
 }

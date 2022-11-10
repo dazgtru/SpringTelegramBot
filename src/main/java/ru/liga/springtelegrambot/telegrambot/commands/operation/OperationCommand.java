@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegramBot.commands.operation;
+package ru.liga.springtelegrambot.telegrambot.commands.operation;
 
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.Chat;
