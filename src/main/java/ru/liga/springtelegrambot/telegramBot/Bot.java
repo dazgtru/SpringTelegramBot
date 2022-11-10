@@ -2,6 +2,7 @@ package ru.liga.springtelegrambot.telegramBot;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -31,23 +32,32 @@ public class Bot extends TelegramLongPollingCommandBot {
     @Getter
     private static Map<Long, Settings> userSettings;
 
-    public Bot(BotConfig config, FeignRegistry feignRegistry) {
+    public Bot(BotConfig config, FeignRegistry feignRegistry,
+               @Autowired StartCommand startCommand,
+               @Autowired HelpCommand helpCommand,
+               @Autowired MenuCommand menuCommand,
+               @Autowired ProfileCommand profileCommand,
+               @Autowired EditCommand editCommand,
+               @Autowired SearchCommand searchCommand,
+               @Autowired LoversCommand loversCommand,
+               @Autowired LeftCommand leftCommand,
+               @Autowired RightCommand rightCommand) {
         super();
         BOT_NAME = config.getBotName();
         BOT_TOKEN = config.getBotToken();
 
-        register(new StartCommand("start", "Старт", feignRegistry));
-        register(new HelpCommand("help", "Помощь"));
-        register(new MenuCommand("menu", "Меню"));
-        register(new ProfileCommand("profile", "Анкета"));
-        register(new EditCommand("edit", "Редактировать"));
-        register(new SearchCommand("search", "Поиск"));
-        register(new LoversCommand("lovers", "Любимцы"));
-        register(new LeftCommand("left", "Влево"));
-        register(new RightCommand("right", "Вправо"));
+        registerAll(startCommand,
+                helpCommand,
+                menuCommand,
+                profileCommand,
+                editCommand,
+                searchCommand,
+                loversCommand,
+                leftCommand,
+                rightCommand);
 
-        userSettings  = new HashMap<>();
-
+        userSettings = new HashMap<>();
+        log.info("Бот успешно запущен.");
     }
 
     @Override

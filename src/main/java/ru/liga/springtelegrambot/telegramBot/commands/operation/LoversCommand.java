@@ -1,5 +1,7 @@
 package ru.liga.springtelegrambot.telegramBot.commands.operation;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -11,8 +13,10 @@ import ru.liga.springtelegrambot.telegramBot.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class LoversCommand extends ServiceCommand {
-    public LoversCommand(String identifier, String description) {
+    public LoversCommand(@Value("lovers") String identifier,
+                         @Value("Любимцы") String description) {
         super(identifier, description);
     }
 
