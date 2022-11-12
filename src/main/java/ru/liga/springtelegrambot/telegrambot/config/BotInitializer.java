@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegramBot.config;
+package ru.liga.springtelegrambot.telegrambot.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import ru.liga.springtelegrambot.telegramBot.Bot;
+import ru.liga.springtelegrambot.telegrambot.Bot;
 
 @Slf4j
 @Component

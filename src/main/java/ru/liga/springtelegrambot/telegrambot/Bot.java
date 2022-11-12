@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegramBot;
+package ru.liga.springtelegrambot.telegrambot;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,12 +9,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.liga.springtelegrambot.telegramBot.commands.operation.*;
-import ru.liga.springtelegrambot.telegramBot.commands.service.HelpCommand;
-import ru.liga.springtelegrambot.telegramBot.commands.service.StartCommand;
-import ru.liga.springtelegrambot.telegramBot.config.BotConfig;
-import ru.liga.springtelegrambot.telegramBot.controller.feign.FeignRegistry;
-import ru.liga.springtelegrambot.telegramBot.utils.Settings;
+import ru.liga.springtelegrambot.telegrambot.commands.operation.*;
+import ru.liga.springtelegrambot.telegrambot.commands.service.HelpCommand;
+import ru.liga.springtelegrambot.telegrambot.commands.service.StartCommand;
+import ru.liga.springtelegrambot.telegrambot.config.BotConfig;
+import ru.liga.springtelegrambot.telegrambot.client.feign.FeignRegistry;
+import ru.liga.springtelegrambot.telegrambot.utils.Settings;
 
 import java.util.HashMap;
 import java.util.Map;

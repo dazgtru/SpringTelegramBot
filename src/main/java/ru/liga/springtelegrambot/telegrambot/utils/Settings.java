@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegramBot.utils;
+package ru.liga.springtelegrambot.telegrambot.utils;
 
 import lombok.Data;
 
