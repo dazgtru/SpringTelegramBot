@@ -24,15 +24,7 @@ public class MenuCommand extends ServiceCommand {
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
 
-        List<KeyboardRow> keyboardRowList = new ArrayList<>();
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-
-        keyboardFirstRow.add(new KeyboardButton("/search"));
-        keyboardFirstRow.add(new KeyboardButton("/profile"));
-        keyboardFirstRow.add(new KeyboardButton("/lovers"));
-        keyboardRowList.add(keyboardFirstRow);
-
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
-                "Command /menu", keyboardRowList);
+                "Command /menu");
     }
 }

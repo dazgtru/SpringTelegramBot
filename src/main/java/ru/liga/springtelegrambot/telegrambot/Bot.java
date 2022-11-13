@@ -15,6 +15,7 @@ import ru.liga.springtelegrambot.telegrambot.commands.service.StartCommand;
 import ru.liga.springtelegrambot.telegrambot.config.BotConfig;
 import ru.liga.springtelegrambot.telegrambot.client.feign.FeignRegistry;
 import ru.liga.springtelegrambot.telegrambot.utils.Settings;
+import ru.liga.springtelegrambot.telegrambot.utils.UserStates;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class Bot extends TelegramLongPollingCommandBot {
     private final String BOT_TOKEN;
 
     @Getter
-    private static final Settings defaultSettings = new Settings("-");
+    private static final Settings defaultSettings = new Settings(UserStates.UNREGISTERED);
 
     @Getter
     private static Map<Long, Settings> userSettings;

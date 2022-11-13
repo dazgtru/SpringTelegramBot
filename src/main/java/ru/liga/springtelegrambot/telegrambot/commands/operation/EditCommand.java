@@ -24,14 +24,7 @@ public class EditCommand extends ServiceCommand {
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
 
-        List<KeyboardRow> keyboardRowList = new ArrayList<>();
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-
-        keyboardFirstRow.add(new KeyboardButton("/edit"));
-        keyboardFirstRow.add(new KeyboardButton("/menu"));
-        keyboardRowList.add(keyboardFirstRow);
-
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
-                "Command /edit", keyboardRowList);
+                "Command /edit");
     }
 }

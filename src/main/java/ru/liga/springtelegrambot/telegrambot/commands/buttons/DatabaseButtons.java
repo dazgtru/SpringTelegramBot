@@ -10,14 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class ProfileButtons implements ButtonKeyboard {
+public class DatabaseButtons implements ButtonKeyboard {
     @Override
     public void setButtons(SendMessage message) {
         List<KeyboardRow> keyboardRowList = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
 
-        keyboardFirstRow.add(new KeyboardButton(Commands.EDIT.command));
+        keyboardFirstRow.add(new KeyboardButton(Commands.LEFT.command));
         keyboardFirstRow.add(new KeyboardButton(Commands.MENU.command));
+        keyboardFirstRow.add(new KeyboardButton(Commands.RIGHT.command));
         keyboardRowList.add(keyboardFirstRow);
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();

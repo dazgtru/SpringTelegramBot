@@ -24,15 +24,7 @@ public class LoversCommand extends ServiceCommand {
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
 
-        List<KeyboardRow> keyboardRowList = new ArrayList<>();
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-
-        keyboardFirstRow.add(new KeyboardButton("/left"));
-        keyboardFirstRow.add(new KeyboardButton("/menu"));
-        keyboardFirstRow.add(new KeyboardButton("/right"));
-        keyboardRowList.add(keyboardFirstRow);
-
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
-                "Command /lovers", keyboardRowList);
+                "Command /lovers");
     }
 }

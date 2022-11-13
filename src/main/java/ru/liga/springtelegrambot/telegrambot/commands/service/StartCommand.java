@@ -6,17 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import ru.liga.springtelegrambot.telegrambot.Bot;
 import ru.liga.springtelegrambot.telegrambot.client.feign.FeignRegistry;
+import ru.liga.springtelegrambot.telegrambot.commands.buttons.Commands;
 import ru.liga.springtelegrambot.telegrambot.data.Profile;
 import ru.liga.springtelegrambot.telegrambot.utils.Settings;
+import ru.liga.springtelegrambot.telegrambot.utils.UserStates;
 import ru.liga.springtelegrambot.telegrambot.utils.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -34,7 +31,7 @@ public class StartCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         Settings userSettings = Bot.getUserSettings(chat.getId());
-        if (userSettings.getState().equals("-")) {
+        if (userSettings.getState().equals(UserStates.UNREGISTERED)) {
             //register
             //Сервис по работе с профилями.
             Profile profile = new Profile(2L,
@@ -49,21 +46,11 @@ public class StartCommand extends ServiceCommand {
             if (!anyName.equals(chat.getId())) {
                 log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chat.getId(), anyName));
             }
-            userSettings.setState("menu");
+            userSettings.setState(UserStates.MENU);
         }
 
-
         String userName = Utils.getUserName(user);
-
-        List<KeyboardRow> keyboardRowList = new ArrayList<>();
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
-
-        keyboardFirstRow.add(new KeyboardButton("/search"));
-        keyboardFirstRow.add(new KeyboardButton("/profile"));
-        keyboardFirstRow.add(new KeyboardButton("/lovers"));
-        keyboardRowList.add(keyboardFirstRow);
-
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
-                "Давайте начнём! Если Вам нужна помощь, нажмите /help", keyboardRowList);
+                "Давайте начнём! Если Вам нужна помощь, нажмите /help");
     }
 }

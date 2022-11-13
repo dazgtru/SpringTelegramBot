@@ -3,12 +3,9 @@ package ru.liga.springtelegrambot.telegrambot.commands.service;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.List;
+import ru.liga.springtelegrambot.telegrambot.commands.buttons.ButtonKeyboard;
 
 @Slf4j
 abstract public class ServiceCommand extends BotCommand {
@@ -24,18 +21,12 @@ abstract public class ServiceCommand extends BotCommand {
                               Long chatId,
                               String commandName,
                               String userName,
-                              String text, List<KeyboardRow> keyboardRowList) {
+                              String text) {
         SendMessage message = new SendMessage();
         message.enableMarkdown(true);
         message.setChatId(chatId.toString());
         message.setText(text);
-
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        message.setReplyMarkup(replyKeyboardMarkup);
-        replyKeyboardMarkup.setSelective(true);
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(false);
-        replyKeyboardMarkup.setKeyboard(keyboardRowList);
+        ButtonKeyboard.getButtonKeyboard(commandName, message);
 
         try {
             absSender.execute(message);

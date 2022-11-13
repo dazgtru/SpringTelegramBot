@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class Settings {
-    private String state;
+    private UserStates state;
 
-    public Settings(String state) {
+    public Settings(UserStates state) {
         this.state = state;
     }
 }
