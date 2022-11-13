@@ -36,4 +36,17 @@ abstract public class ServiceCommand extends BotCommand {
             e.printStackTrace();
         }
     }
+
+    protected void sendInlineAnswer(AbsSender absSender,
+                              Long chatId,
+                              String commandName,
+                              String userName, SendMessage message) {
+        try {
+            absSender.execute(message);
+        } catch (TelegramApiException e) {
+            log.error(String.format("Ошибка %s. Команда %s. Пользователь: %s",
+                    e.getMessage(), commandName, userName));
+            e.printStackTrace();
+        }
+    }
 }

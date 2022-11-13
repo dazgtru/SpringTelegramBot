@@ -15,9 +15,8 @@ public enum Commands {
     public final String command;
     public final String description;
 
-    Commands(String command, String description) {
+    Commands(final String command, final String description) {
         this.command = command;
         this.description = description;
-
     }
 }
