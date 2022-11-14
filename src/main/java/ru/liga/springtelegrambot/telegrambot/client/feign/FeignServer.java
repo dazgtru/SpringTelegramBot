@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.liga.springtelegrambot.telegrambot.data.Profile;
 
-@FeignClient(name="profile-registry",
-                url="${feign.server.url}",
-                decode404 = true)
+@FeignClient(name = "profile-registry",
+        url = "${feign.server.url}",
+        decode404 = true)
 public interface FeignServer {
 
     @PostMapping("profiles")
@@ -31,6 +31,7 @@ public interface FeignServer {
      */
     @GetMapping(value = "profiles/search/like/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     ResponseEntity<byte[]> getImgSearchLikeAndNext(@RequestParam("id") Long id);
+
 
     @GetMapping(value = "profiles/lovers/next/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     ResponseEntity<byte[]> getImgLoversNext(@RequestParam("id") Long id);
