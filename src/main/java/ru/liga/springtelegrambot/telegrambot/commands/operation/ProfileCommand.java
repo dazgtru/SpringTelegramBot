@@ -19,7 +19,7 @@ public class ProfileCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-
+        //TODO Вывод картинки анкеты
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
                 "Command /profile");
     }

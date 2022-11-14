@@ -19,7 +19,7 @@ public class EditCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-
+        //TODO Сменить RegisteredState на NOT_REGISTERED чтобы заного пройти регистрацию и отправить в бд новый запрос
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
                 "Command /edit");
     }

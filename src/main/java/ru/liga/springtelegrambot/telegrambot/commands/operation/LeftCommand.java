@@ -19,7 +19,7 @@ public class LeftCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-
+        //TODO Запрос в БД на предыдущую запись Search или Lovers
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
                 "Command /left");
     }

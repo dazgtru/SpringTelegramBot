@@ -19,7 +19,6 @@ public class MenuCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
                 "Command /menu");
     }

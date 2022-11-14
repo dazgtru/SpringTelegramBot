@@ -19,7 +19,7 @@ public class SearchCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-
+        //TODO вывести страничку из Search
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
                 "Command /search");
     }

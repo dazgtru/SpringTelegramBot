@@ -12,6 +12,6 @@ abstract public class OperationCommand extends BotCommand {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
-
+        //TODO Можно воткнуть Feign сли правильно понимаю
     }
 }

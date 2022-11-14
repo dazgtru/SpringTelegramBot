@@ -18,7 +18,7 @@ public class LoversCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         String userName = Utils.getUserName(user);
-
+        //TODO вывести страничку из Lovers
         sendAnswer(absSender, chat.getId(), this.getCommandIdentifier(), userName,
                 "Command /lovers");
     }
