@@ -160,21 +160,30 @@ public class Bot extends TelegramLongPollingCommandBot {
                     case "MALES_BUTTON" -> {
                         rowProfile.setProfileGenderSearch(chatId, "сударъ");
                         setAnswer(chatId, "Вы выбрали сударей");
-                        feignServer.setProfile(rowProfile.getProfile(chatId));
+                        Long response = feignServer.setProfile(rowProfile.getProfile(chatId));
+                        if (!chatId.equals(response)){
+                            log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chatId, response));
+                        }
                         userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
                         setAnswer(chatId, "Вы зарегистрированы!");
                     }
                     case "FEMALES_BUTTON" -> {
                         rowProfile.setProfileGenderSearch(chatId, "сударыня");
                         setAnswer(chatId, "Вы выбрали сударынь");
-                        feignServer.setProfile(rowProfile.getProfile(chatId));
+                        Long response = feignServer.setProfile(rowProfile.getProfile(chatId));
+                        if (!chatId.equals(response)){
+                            log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chatId, response));
+                        }
                         userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
                         setAnswer(chatId, "Вы зарегистрированы!");
                     }
                     case "ALL_BUTTON" -> {
                         rowProfile.setProfileGenderSearch(chatId, "все");
                         setAnswer(chatId, "Вы выбрали всех");
-                        feignServer.setProfile(rowProfile.getProfile(chatId));
+                        Long response = feignServer.setProfile(rowProfile.getProfile(chatId));
+                        if (!chatId.equals(response)){
+                            log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chatId, response));
+                        }
                         userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
                         setAnswer(chatId, "Вы зарегистрированы!");
 

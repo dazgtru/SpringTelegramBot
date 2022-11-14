@@ -15,7 +15,7 @@ import ru.liga.springtelegrambot.telegrambot.Bot;
 public class BotInitializer {
 
     @Autowired
-    Bot bot;
+    public Bot bot;
 
     @EventListener({ContextRefreshedEvent.class})
     public void init() throws TelegramApiException {
