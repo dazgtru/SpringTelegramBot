@@ -10,9 +10,11 @@ import ru.liga.springtelegrambot.telegrambot.commands.buttons.ButtonKeyboard;
 @Slf4j
 abstract public class ServiceCommand extends BotCommand {
 
+
     protected ServiceCommand(String identifier, String description) {
         super(identifier, description);
     }
+
 
     /**
      * Отправка ответа пользователю.

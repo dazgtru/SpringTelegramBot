@@ -10,15 +10,16 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.liga.springtelegrambot.telegrambot.commands.buttons.ButtonKeyboard;
 import ru.liga.springtelegrambot.telegrambot.commands.operation.*;
 import ru.liga.springtelegrambot.telegrambot.commands.service.HelpCommand;
 import ru.liga.springtelegrambot.telegrambot.commands.service.StartCommand;
 import ru.liga.springtelegrambot.telegrambot.config.BotConfig;
-import ru.liga.springtelegrambot.telegrambot.client.feign.FeignRegistry;
+import ru.liga.springtelegrambot.telegrambot.client.feign.FeignServer;
 import ru.liga.springtelegrambot.telegrambot.data.ProfileService;
-import ru.liga.springtelegrambot.telegrambot.utils.RegistrationsStates;
-import ru.liga.springtelegrambot.telegrambot.utils.Settings;
-import ru.liga.springtelegrambot.telegrambot.utils.UserStates;
+import ru.liga.springtelegrambot.telegrambot.data.RegistrationsStates;
+import ru.liga.springtelegrambot.telegrambot.data.Settings;
+import ru.liga.springtelegrambot.telegrambot.data.UserStates;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class Bot extends TelegramLongPollingCommandBot {
     @Getter
     private static Map<Long, Settings> userSettings;
 
-    public Bot(BotConfig config, FeignRegistry feignRegistry,
+    public Bot(BotConfig config, FeignServer feignServer,
                @Autowired StartCommand startCommand,
                @Autowired HelpCommand helpCommand,
                @Autowired MenuCommand menuCommand,
@@ -91,6 +92,7 @@ public class Bot extends TelegramLongPollingCommandBot {
                 Message message = update.getMessage();
                 Long chatId = message.getChatId();
                 Settings userSettings = getUserSettings(chatId);
+
                 switch (userSettings.getRegistrationsState()) {
                     case GET_NAME -> {
                         setAnswer(chatId, "Вас зовут - " + message.getText());
@@ -113,29 +115,6 @@ public class Bot extends TelegramLongPollingCommandBot {
             } else {
                 log.info("Not supported yet");
             }
-        }
-    }
-
-    private void setAnswer(Long chatId, String text) {
-        SendMessage answer = new SendMessage();
-        answer.setText(text);
-        answer.setChatId(chatId.toString());
-        try {
-            execute(answer);
-        } catch (TelegramApiException e) {
-            log.error(String.format("Ошибка %s. Сообщение, не являющееся командой. Пользователь: %s", e.getMessage(),
-                    chatId));
-            e.printStackTrace();
-        }
-    }
-
-    private void setAnswer(SendMessage sendMessage) {
-        try {
-            execute(sendMessage);
-        } catch (TelegramApiException e) {
-            log.error(String.format("Ошибка %s. Сообщение, не являющееся командой. Пользователь: %s", e.getMessage(),
-                    sendMessage.getChatId()));
-            e.printStackTrace();
         }
     }
 
@@ -181,9 +160,36 @@ public class Bot extends TelegramLongPollingCommandBot {
                         setAnswer(chatId, "Вы выбрали всех");
                         userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
                         setAnswer(chatId, "Вы зарегистрированы!");
+
+//                        SendMessage sendMessage = new SendMessage();
+//                        ButtonKeyboard.getButtonKeyboard(".menu", sendMessage);
+//                        setAnswer(sendMessage);
                     }
                 }
             }
+        }
+    }
+
+    private void setAnswer(Long chatId, String text) {
+        SendMessage answer = new SendMessage();
+        answer.setText(text);
+        answer.setChatId(chatId.toString());
+        try {
+            execute(answer);
+        } catch (TelegramApiException e) {
+            log.error(String.format("Ошибка %s. Сообщение, не являющееся командой. Пользователь: %s", e.getMessage(),
+                    chatId));
+            e.printStackTrace();
+        }
+    }
+
+    private void setAnswer(SendMessage sendMessage) {
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            log.error(String.format("Ошибка %s. Сообщение, не являющееся командой. Пользователь: %s", e.getMessage(),
+                    sendMessage.getChatId()));
+            e.printStackTrace();
         }
     }
 }

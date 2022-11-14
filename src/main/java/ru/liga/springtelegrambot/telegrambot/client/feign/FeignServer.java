@@ -8,10 +8,13 @@ import ru.liga.springtelegrambot.telegrambot.data.Profile;
 @FeignClient(name="profile-registry",
                 url="${feign.server.url}",
                 decode404 = true)
-public interface FeignRegistry {
+public interface FeignServer {
 
-    @PostMapping("users")
+    @PostMapping("profiles")
     Long setProfile(@RequestBody Profile profile);
+
+
+
 }
 
 //запрос картинки

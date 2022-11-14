@@ -9,23 +9,22 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import ru.liga.springtelegrambot.telegrambot.Bot;
-import ru.liga.springtelegrambot.telegrambot.client.feign.FeignRegistry;
-import ru.liga.springtelegrambot.telegrambot.data.Profile;
+import ru.liga.springtelegrambot.telegrambot.client.feign.FeignServer;
 import ru.liga.springtelegrambot.telegrambot.data.ProfileService;
-import ru.liga.springtelegrambot.telegrambot.utils.Settings;
-import ru.liga.springtelegrambot.telegrambot.utils.UserStates;
+import ru.liga.springtelegrambot.telegrambot.data.Settings;
+import ru.liga.springtelegrambot.telegrambot.data.UserStates;
 import ru.liga.springtelegrambot.telegrambot.utils.Utils;
 
 @Slf4j
 @Component
 public class StartCommand extends ServiceCommand {
 
-    private final FeignRegistry feignRegistry;
+    private final FeignServer feignServer;
     public StartCommand(@Value("start") String identifier,
                         @Value("Старт") String description,
-                        @Autowired FeignRegistry feignRegistry) {
+                        @Autowired FeignServer feignServer) {
         super(identifier, description);
-        this.feignRegistry = feignRegistry;
+        this.feignServer = feignServer;
     }
 
     @Override
