@@ -20,6 +20,7 @@ import ru.liga.springtelegrambot.telegrambot.utils.Utils;
 public class StartCommand extends ServiceCommand {
 
     private final FeignServer feignServer;
+
     public StartCommand(@Value("start") String identifier,
                         @Value("Старт") String description,
                         @Autowired FeignServer feignServer) {

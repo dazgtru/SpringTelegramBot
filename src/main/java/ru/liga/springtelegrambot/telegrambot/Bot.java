@@ -10,16 +10,12 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.liga.springtelegrambot.telegrambot.commands.buttons.ButtonKeyboard;
 import ru.liga.springtelegrambot.telegrambot.commands.operation.*;
 import ru.liga.springtelegrambot.telegrambot.commands.service.HelpCommand;
 import ru.liga.springtelegrambot.telegrambot.commands.service.StartCommand;
 import ru.liga.springtelegrambot.telegrambot.config.BotConfig;
 import ru.liga.springtelegrambot.telegrambot.client.feign.FeignServer;
-import ru.liga.springtelegrambot.telegrambot.data.ProfileService;
-import ru.liga.springtelegrambot.telegrambot.data.RegistrationsStates;
-import ru.liga.springtelegrambot.telegrambot.data.Settings;
-import ru.liga.springtelegrambot.telegrambot.data.UserStates;
+import ru.liga.springtelegrambot.telegrambot.data.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,13 +27,21 @@ public class Bot extends TelegramLongPollingCommandBot {
     private final String BOT_NAME;
     private final String BOT_TOKEN;
 
+    @Autowired
+    public FeignServer feignServer;
+
+    private RowProfile rowProfile;
+
     @Getter
     private static final Settings defaultSettings = new Settings(UserStates.UNREGISTERED, RegistrationsStates.NOT_REGISTERED);
 
     @Getter
     private static Map<Long, Settings> userSettings;
 
-    public Bot(BotConfig config, FeignServer feignServer,
+
+
+    public Bot(BotConfig config,
+               @Autowired RowProfile rowProfile,
                @Autowired StartCommand startCommand,
                @Autowired HelpCommand helpCommand,
                @Autowired MenuCommand menuCommand,
@@ -50,6 +54,8 @@ public class Bot extends TelegramLongPollingCommandBot {
         super();
         BOT_NAME = config.getBotName();
         BOT_TOKEN = config.getBotToken();
+
+        this.rowProfile = rowProfile;
 
         registerAll(startCommand,
                 helpCommand,
@@ -95,12 +101,14 @@ public class Bot extends TelegramLongPollingCommandBot {
 
                 switch (userSettings.getRegistrationsState()) {
                     case GET_NAME -> {
+                        rowProfile.setProfileName(chatId, message.getText());
                         setAnswer(chatId, "Вас зовут - " + message.getText());
                         userSettings.setRegistrationsState(RegistrationsStates.GET_DESC);
                         setAnswer(chatId, "Опишите себя(при этом первая строка - заголовок, последующие - описание)");
                     }
 
                     case GET_DESC -> {
+                        rowProfile.setProfileDescription(chatId, message.getText());
                         setAnswer(chatId, "Ваше описание: \n" + message.getText());
                         userSettings.setRegistrationsState(RegistrationsStates.GET_DESC);
                         ProfileService profileService = new ProfileService();
@@ -127,6 +135,7 @@ public class Bot extends TelegramLongPollingCommandBot {
             case NOT_REGISTERED -> {
                 if (callback.getData().equals("YES_BUTTON")) {
                     log.info("Создаем профиль и присваиваем chatId");
+                    rowProfile.addNewProfile(chatId);
                     userSettings.setRegistrationsState(RegistrationsStates.GET_GENDER);
                     setAnswer(profileService.registration(userSettings, chatId));
                 } else {
@@ -135,10 +144,12 @@ public class Bot extends TelegramLongPollingCommandBot {
             }
             case GET_GENDER -> {
                 if (callback.getData().equals("MALE_BUTTON")) {
+                    rowProfile.setProfileGender(chatId, "сударъ");
                     setAnswer(chatId, "Вы выбрали сударъ");
                     userSettings.setRegistrationsState(RegistrationsStates.GET_NAME);
                     setAnswer(chatId, "Как вас величать?");
                 } else {
+                    rowProfile.setProfileGender(chatId, "сударыня");
                     setAnswer(chatId, "Вы выбрали сударыня");
                     userSettings.setRegistrationsState(RegistrationsStates.GET_NAME);
                     setAnswer(chatId, "Как вас величать?");
@@ -147,17 +158,23 @@ public class Bot extends TelegramLongPollingCommandBot {
             case GET_DESC -> {
                 switch (callback.getData()) {
                     case "MALES_BUTTON" -> {
+                        rowProfile.setProfileGenderSearch(chatId, "сударъ");
                         setAnswer(chatId, "Вы выбрали сударей");
+                        feignServer.setProfile(rowProfile.getProfile(chatId));
                         userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
                         setAnswer(chatId, "Вы зарегистрированы!");
                     }
                     case "FEMALES_BUTTON" -> {
+                        rowProfile.setProfileGenderSearch(chatId, "сударыня");
                         setAnswer(chatId, "Вы выбрали сударынь");
+                        feignServer.setProfile(rowProfile.getProfile(chatId));
                         userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
                         setAnswer(chatId, "Вы зарегистрированы!");
                     }
                     case "ALL_BUTTON" -> {
+                        rowProfile.setProfileGenderSearch(chatId, "все");
                         setAnswer(chatId, "Вы выбрали всех");
+                        feignServer.setProfile(rowProfile.getProfile(chatId));
                         userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
                         setAnswer(chatId, "Вы зарегистрированы!");
 
