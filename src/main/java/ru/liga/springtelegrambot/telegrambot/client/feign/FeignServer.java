@@ -20,15 +20,21 @@ public interface FeignServer {
     @GetMapping(value = "profiles/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     ResponseEntity<byte[]> getImgMyProfile(@RequestParam("id") Long id);
 
-    @GetMapping(value = "profiles/next/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    /**
+     * Кнопка search(влево)
+     */
+    @GetMapping(value = "profiles/search/next/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     ResponseEntity<byte[]> getImgSearchNext(@RequestParam("id") Long id);
-}
 
-//запрос картинки
-//@Operation(summary = "Печать постановления")
-//@ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Файл постановление")})
-//@RequestMapping(value = "/print", method = RequestMethod.GET,
-//        produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-//public void print(HttpServletResponse response, @RequestParam("caseId") Long caseId) throws Exception {
-//    printService.printResolution(response, caseId);
-//}
+    /**
+     * Кнопка search(вправо)
+     */
+    @GetMapping(value = "profiles/search/like/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    ResponseEntity<byte[]> getImgSearchLikeAndNext(@RequestParam("id") Long id);
+
+    @GetMapping(value = "profiles/lovers/next/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    ResponseEntity<byte[]> getImgLoversNext(@RequestParam("id") Long id);
+
+    @GetMapping(value = "profiles/lovers/prev/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    ResponseEntity<byte[]> getImgLoversPrev(@RequestParam("id") Long id);
+}
