@@ -70,8 +70,4 @@ public class ProfileService{
 
         return message;
     }
-
-    void byteToImage() {
-
-    }
 }

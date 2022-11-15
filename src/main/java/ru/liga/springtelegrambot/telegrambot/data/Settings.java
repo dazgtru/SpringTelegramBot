@@ -11,4 +11,8 @@ public class Settings {
         this.state = state;
         this.registrationsState = registrationsState;
     }
+
+    public Settings(Settings defaultSettings) {
+        this(defaultSettings.getState(), defaultSettings.getRegistrationsState());
+    }
 }

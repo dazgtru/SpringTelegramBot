@@ -50,22 +50,10 @@ abstract public class ServiceCommand extends BotCommand {
         }
     }
 
-    protected void sendInlineAnswer(AbsSender absSender,
-                              Long chatId,
-                              String commandName,
-                              String userName, SendMessage message) {
-        try {
-            absSender.execute(message);
-        } catch (TelegramApiException e) {
-            log.error(String.format("Ошибка %s. Команда %s. Пользователь: %s",
-                    e.getMessage(), commandName, userName));
-            e.printStackTrace();
-        }
-    }
-
-    protected void method(AbsSender absSender, Long chatId, ResponseEntity<byte[]> responseEntity) {
+    protected void sendProfileImage(AbsSender absSender, Long chatId, ResponseEntity<byte[]> responseEntity, String commandName) {
         byte[] bytes = responseEntity.getBody();
         SendPhoto sendPhoto = byteToImage.convertByteToImage(bytes, chatId);
+        ButtonKeyboard.getButtonKeyboard(commandName, sendPhoto);
         try {
             absSender.execute(sendPhoto);
         } catch (TelegramApiException e) {

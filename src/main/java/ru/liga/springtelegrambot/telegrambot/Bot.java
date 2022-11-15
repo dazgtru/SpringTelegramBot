@@ -84,7 +84,9 @@ public class Bot extends TelegramLongPollingCommandBot {
         Map<Long, Settings> userSettings = getUserSettings();
         Settings settings = userSettings.get(chatId);
         if (settings == null) {
-            return defaultSettings;
+            settings = new Settings(defaultSettings);
+            userSettings.put(chatId, settings);
+            return settings;
         }
         return settings;
     }
@@ -146,52 +148,36 @@ public class Bot extends TelegramLongPollingCommandBot {
                 if (callback.getData().equals("MALE_BUTTON")) {
                     rowProfile.setProfileGender(chatId, "сударъ");
                     setAnswer(chatId, "Вы выбрали сударъ");
-                    userSettings.setRegistrationsState(RegistrationsStates.GET_NAME);
-                    setAnswer(chatId, "Как вас величать?");
                 } else {
                     rowProfile.setProfileGender(chatId, "сударыня");
                     setAnswer(chatId, "Вы выбрали сударыня");
-                    userSettings.setRegistrationsState(RegistrationsStates.GET_NAME);
-                    setAnswer(chatId, "Как вас величать?");
                 }
+                userSettings.setRegistrationsState(RegistrationsStates.GET_NAME);
+                setAnswer(chatId, "Как вас величать?");
             }
             case GET_DESC -> {
                 switch (callback.getData()) {
                     case "MALES_BUTTON" -> {
                         rowProfile.setProfileGenderSearch(chatId, "сударъ");
                         setAnswer(chatId, "Вы выбрали сударей");
-                        Long response = feignServer.setProfile(rowProfile.getProfile(chatId));
-                        if (!chatId.equals(response)){
-                            log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chatId, response));
-                        }
-                        userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
-                        setAnswer(chatId, "Вы зарегистрированы!");
                     }
                     case "FEMALES_BUTTON" -> {
                         rowProfile.setProfileGenderSearch(chatId, "сударыня");
                         setAnswer(chatId, "Вы выбрали сударынь");
-                        Long response = feignServer.setProfile(rowProfile.getProfile(chatId));
-                        if (!chatId.equals(response)){
-                            log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chatId, response));
-                        }
-                        userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
-                        setAnswer(chatId, "Вы зарегистрированы!");
                     }
                     case "ALL_BUTTON" -> {
                         rowProfile.setProfileGenderSearch(chatId, "все");
                         setAnswer(chatId, "Вы выбрали всех");
-                        Long response = feignServer.setProfile(rowProfile.getProfile(chatId));
-                        if (!chatId.equals(response)){
-                            log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chatId, response));
-                        }
-                        userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
-                        setAnswer(chatId, "Вы зарегистрированы!");
-
-//                        SendMessage sendMessage = new SendMessage();
-//                        ButtonKeyboard.getButtonKeyboard(".menu", sendMessage);
-//                        setAnswer(sendMessage);
                     }
                 }
+
+                Long response = feignServer.setProfile(rowProfile.getProfile(chatId));
+                if (!chatId.equals(response)){
+                    log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chatId, response));
+                }
+                userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
+                userSettings.setState(UserStates.MENU);
+                setAnswer(chatId, "Ваш профиль сохранён!\nМожем приступить.");
             }
         }
     }

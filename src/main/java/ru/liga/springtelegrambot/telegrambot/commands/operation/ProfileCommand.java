@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
+import ru.liga.springtelegrambot.telegrambot.Bot;
 import ru.liga.springtelegrambot.telegrambot.commands.service.ServiceCommand;
+import ru.liga.springtelegrambot.telegrambot.data.Settings;
+import ru.liga.springtelegrambot.telegrambot.data.UserStates;
 
 @Slf4j
 @Component
@@ -24,9 +27,9 @@ public class ProfileCommand extends ServiceCommand {
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
         Long chatId = chat.getId();
-
+        Settings userSettings = Bot.getUserSettings(chatId);
+        userSettings.setState(UserStates.PROFILE_MENU);
         ResponseEntity<byte[]> responseEntity = feignServer.getImgMyProfile(chatId);
-
-        method(absSender, chatId, responseEntity);
+        sendProfileImage(absSender, chatId, responseEntity, this.getCommandIdentifier());
     }
 }
