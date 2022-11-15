@@ -15,7 +15,7 @@ import ru.liga.springtelegrambot.telegrambot.data.Profile;
 public interface FeignServer {
 
     @PostMapping("profiles")
-    Long setProfile(@RequestBody Profile profile);
+    ResponseEntity<byte[]> setProfile(@RequestBody Profile profile);
 
     @GetMapping(value = "profiles/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     ResponseEntity<byte[]> getImgMyProfile(@RequestParam("id") Long id);

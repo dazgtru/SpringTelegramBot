@@ -3,19 +3,23 @@ package ru.liga.springtelegrambot.telegrambot;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.liga.springtelegrambot.telegrambot.commands.buttons.ButtonKeyboard;
 import ru.liga.springtelegrambot.telegrambot.commands.operation.*;
 import ru.liga.springtelegrambot.telegrambot.commands.service.HelpCommand;
 import ru.liga.springtelegrambot.telegrambot.commands.service.StartCommand;
 import ru.liga.springtelegrambot.telegrambot.config.BotConfig;
 import ru.liga.springtelegrambot.telegrambot.client.feign.FeignServer;
 import ru.liga.springtelegrambot.telegrambot.data.*;
+import ru.liga.springtelegrambot.telegrambot.utils.ByteToImage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +41,8 @@ public class Bot extends TelegramLongPollingCommandBot {
 
     @Getter
     private static Map<Long, Settings> userSettings;
-
+    @Autowired
+    private ByteToImage byteToImage;
 
 
     public Bot(BotConfig config,
@@ -171,9 +176,14 @@ public class Bot extends TelegramLongPollingCommandBot {
                     }
                 }
 
-                Long response = feignServer.setProfile(rowProfile.getProfile(chatId));
-                if (!chatId.equals(response)){
-                    log.error(String.format("Чат id - {%s}, результат обращения к бд - {%s}", chatId, response));
+                ResponseEntity<byte[]> responseEntity = feignServer.setProfile(rowProfile.getProfile(chatId));
+                byte[] bytes = responseEntity.getBody();
+                SendPhoto sendPhoto = byteToImage.convertByteToImage(bytes, chatId);
+                ButtonKeyboard.getButtonKeyboard("menu", sendPhoto);
+                try {
+                    execute(sendPhoto);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
                 }
                 userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
                 userSettings.setState(UserStates.MENU);
