@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.liga.springtelegrambot.telegrambot.Bot;
-import ru.liga.springtelegrambot.telegrambot.data.ProfileService;
+import ru.liga.springtelegrambot.telegrambot.data.ProfileRegistrationService;
 import ru.liga.springtelegrambot.telegrambot.data.RegistrationsStates;
 import ru.liga.springtelegrambot.telegrambot.data.Settings;
 import ru.liga.springtelegrambot.telegrambot.data.UserStates;
@@ -20,13 +20,13 @@ import ru.liga.springtelegrambot.telegrambot.utils.Utils;
 @Component
 public class StartCommand extends ServiceCommand {
 
-    private final ProfileService profileService;
+    private final ProfileRegistrationService profileRegistrationService;
 
     public StartCommand(@Value("start") String identifier,
                         @Value("Старт") String description,
-                        @Autowired ProfileService profileService) {
+                        @Autowired ProfileRegistrationService profileRegistrationService) {
         super(identifier, description);
-        this.profileService = profileService;
+        this.profileRegistrationService = profileRegistrationService;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class StartCommand extends ServiceCommand {
         userSettings.setState(UserStates.UNREGISTERED);
         userSettings.setRegistrationsState(RegistrationsStates.NOT_REGISTERED);
         if (userSettings.getState().equals(UserStates.UNREGISTERED)) {
-            SendMessage message = profileService.registration(userSettings, chat.getId());
+            SendMessage message = profileRegistrationService.registration(userSettings, chat.getId());
             try {
                 absSender.execute(message);
             } catch (TelegramApiException e) {

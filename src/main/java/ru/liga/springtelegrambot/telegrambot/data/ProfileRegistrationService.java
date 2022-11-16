@@ -11,7 +11,11 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class ProfileService{
+public class ProfileRegistrationService {
+
+    public SendMessage registration( Settings userSettings, Long chatId, String text) {
+        return null;
+    }
 
     public SendMessage registration(Settings userSettings, Long chatId) {
         userSettings.setState(UserStates.REGISTRATION);

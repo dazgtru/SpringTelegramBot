@@ -3,7 +3,6 @@ package ru.liga.springtelegrambot.telegrambot;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -34,7 +33,12 @@ public class Bot extends TelegramLongPollingCommandBot {
     @Autowired
     public FeignServer feignServer;
 
+    @Autowired
     private RowProfile rowProfile;
+
+    @Autowired
+    private NonCommand nonCommand;
+
 
     @Getter
     private static final Settings defaultSettings = new Settings(UserStates.UNREGISTERED, RegistrationsStates.NOT_REGISTERED);
@@ -99,100 +103,50 @@ public class Bot extends TelegramLongPollingCommandBot {
     @Override
     public void processNonCommandUpdate(Update update) {
         if (update.hasMessage() || update.hasCallbackQuery()) {
+
             if (update.hasCallbackQuery()) {
-                callbackQuery(update.getCallbackQuery());
-            } else if (update.hasMessage()){
-                Message message = update.getMessage();
-                Long chatId = message.getChatId();
-                Settings userSettings = getUserSettings(chatId);
 
-                switch (userSettings.getRegistrationsState()) {
-                    case GET_NAME -> {
-                        rowProfile.setProfileName(chatId, message.getText());
-                        setAnswer(chatId, "Вас зовут - " + message.getText());
-                        userSettings.setRegistrationsState(RegistrationsStates.GET_DESC);
-                        setAnswer(chatId, "Опишите себя(при этом первая строка - заголовок, последующие - описание)");
+                CallbackQuery callbackQuery = update.getCallbackQuery();
+                Long chatId = callbackQuery.getMessage().getChatId();
+                Settings userSettingsFromCallback = getUserSettings(chatId);
+
+                switch (userSettingsFromCallback.getRegistrationsState()) {
+                    case NOT_REGISTERED -> {
+                        sendMessage(nonCommand.getProfileRegistrationService(chatId, userSettingsFromCallback, callbackQuery));
                     }
-
+                    case GET_GENDER -> {
+                        sendMessage(nonCommand.setProfileGender(chatId, userSettingsFromCallback, callbackQuery));
+                    }
                     case GET_DESC -> {
-                        rowProfile.setProfileDescription(chatId, message.getText());
-                        setAnswer(chatId, "Ваше описание: \n" + message.getText());
-                        userSettings.setRegistrationsState(RegistrationsStates.GET_DESC);
-                        ProfileService profileService = new ProfileService();
-                        setAnswer(profileService.registration(userSettings, chatId));
-                    }
-
-                    default -> {
-                        String answer = "Напишите или выберите команду из кнопок.";
-                        setAnswer(chatId, answer);
+                        sendMessage(nonCommand.setProfileGenderSearch(chatId, callbackQuery));
+                        SendPhoto sendPhoto = nonCommand.finishRegister(chatId, userSettingsFromCallback);
+                        ButtonKeyboard.getButtonKeyboard("menu", sendPhoto);
+                        sendMessage(sendPhoto);
+                        sendMessage(chatId, "Ваш профиль сохранён!\nМожем приступить.");
                     }
                 }
+            } else if (update.hasMessage()) {
+
+                Long chatId = update.getMessage().getChatId();
+                Settings userSettingsFromMessage = getUserSettings(chatId);
+                Message message = update.getMessage();
+
+                switch (userSettingsFromMessage.getRegistrationsState()) {
+                    case GET_NAME -> {
+                        sendMessage(nonCommand.setProfileName(chatId, userSettingsFromMessage, message));
+                    }
+                    case GET_DESC -> {
+                        sendMessage(nonCommand.setProfileDescription(chatId, userSettingsFromMessage, message));
+                    }
+                }
+
             } else {
                 log.info("Not supported yet");
             }
         }
     }
 
-    private void callbackQuery(CallbackQuery callback) {
-        Long chatId = callback.getMessage().getChatId();
-        Settings userSettings = getUserSettings(chatId);
-        ProfileService profileService = new ProfileService();
-
-        switch (userSettings.getRegistrationsState()) {
-            case NOT_REGISTERED -> {
-                if (callback.getData().equals("YES_BUTTON")) {
-                    log.info("Создаем профиль и присваиваем chatId");
-                    rowProfile.addNewProfile(chatId);
-                    userSettings.setRegistrationsState(RegistrationsStates.GET_GENDER);
-                    setAnswer(profileService.registration(userSettings, chatId));
-                } else {
-                    setAnswer(chatId, "Когда надумаете зарегистрироваться напишите /start");
-                }
-            }
-            case GET_GENDER -> {
-                if (callback.getData().equals("MALE_BUTTON")) {
-                    rowProfile.setProfileGender(chatId, "сударъ");
-                    setAnswer(chatId, "Вы выбрали сударъ");
-                } else {
-                    rowProfile.setProfileGender(chatId, "сударыня");
-                    setAnswer(chatId, "Вы выбрали сударыня");
-                }
-                userSettings.setRegistrationsState(RegistrationsStates.GET_NAME);
-                setAnswer(chatId, "Как вас величать?");
-            }
-            case GET_DESC -> {
-                switch (callback.getData()) {
-                    case "MALES_BUTTON" -> {
-                        rowProfile.setProfileGenderSearch(chatId, "сударъ");
-                        setAnswer(chatId, "Вы выбрали сударей");
-                    }
-                    case "FEMALES_BUTTON" -> {
-                        rowProfile.setProfileGenderSearch(chatId, "сударыня");
-                        setAnswer(chatId, "Вы выбрали сударынь");
-                    }
-                    case "ALL_BUTTON" -> {
-                        rowProfile.setProfileGenderSearch(chatId, "все");
-                        setAnswer(chatId, "Вы выбрали всех");
-                    }
-                }
-
-                ResponseEntity<byte[]> responseEntity = feignServer.setProfile(rowProfile.getProfile(chatId));
-                byte[] bytes = responseEntity.getBody();
-                SendPhoto sendPhoto = byteToImage.convertByteToImage(bytes, chatId);
-                ButtonKeyboard.getButtonKeyboard("menu", sendPhoto);
-                try {
-                    execute(sendPhoto);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
-                userSettings.setRegistrationsState(RegistrationsStates.REGISTERED);
-                userSettings.setState(UserStates.MENU);
-                setAnswer(chatId, "Ваш профиль сохранён!\nМожем приступить.");
-            }
-        }
-    }
-
-    private void setAnswer(Long chatId, String text) {
+    public void sendMessage(Long chatId, String text) {
         SendMessage answer = new SendMessage();
         answer.setText(text);
         answer.setChatId(chatId.toString());
@@ -205,7 +159,17 @@ public class Bot extends TelegramLongPollingCommandBot {
         }
     }
 
-    private void setAnswer(SendMessage sendMessage) {
+    public void sendMessage(SendMessage sendMessage) {
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            log.error(String.format("Ошибка %s. Сообщение, не являющееся командой. Пользователь: %s", e.getMessage(),
+                    sendMessage.getChatId()));
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessage(SendPhoto sendMessage) {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
