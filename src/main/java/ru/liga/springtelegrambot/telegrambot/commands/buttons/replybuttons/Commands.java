@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegrambot.commands.buttons;
+package ru.liga.springtelegrambot.telegrambot.commands.buttons.replybuttons;
 
 
 public enum Commands {

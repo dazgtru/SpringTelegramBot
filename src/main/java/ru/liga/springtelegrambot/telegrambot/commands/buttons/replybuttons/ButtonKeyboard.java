@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegrambot.commands.buttons;
+package ru.liga.springtelegrambot.telegrambot.commands.buttons.replybuttons;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

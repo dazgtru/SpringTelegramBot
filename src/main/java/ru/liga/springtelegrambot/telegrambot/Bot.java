@@ -7,11 +7,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.liga.springtelegrambot.telegrambot.commands.buttons.ButtonKeyboard;
 import ru.liga.springtelegrambot.telegrambot.commands.operation.*;
 import ru.liga.springtelegrambot.telegrambot.commands.service.HelpCommand;
 import ru.liga.springtelegrambot.telegrambot.commands.service.StartCommand;
@@ -19,6 +16,7 @@ import ru.liga.springtelegrambot.telegrambot.config.BotConfig;
 import ru.liga.springtelegrambot.telegrambot.client.FeignServer;
 import ru.liga.springtelegrambot.telegrambot.data.*;
 import ru.liga.springtelegrambot.telegrambot.utils.ByteToImage;
+import ru.liga.springtelegrambot.telegrambot.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,59 +101,16 @@ public class Bot extends TelegramLongPollingCommandBot {
     @Override
     public void processNonCommandUpdate(Update update) {
         if (update.hasMessage() || update.hasCallbackQuery()) {
-
-            if (update.hasCallbackQuery()) {
-
-                CallbackQuery callbackQuery = update.getCallbackQuery();
-                Long chatId = callbackQuery.getMessage().getChatId();
-                Settings userSettingsFromCallback = getUserSettings(chatId);
-
-                switch (userSettingsFromCallback.getRegistrationsState()) {
-                    case NOT_REGISTERED -> {
-                        sendMessage(profileRegistrationService.setProfileId(chatId, userSettingsFromCallback, callbackQuery));
-                    }
-                    case GET_GENDER -> {
-                        sendMessage(profileRegistrationService.setProfileGender(chatId, userSettingsFromCallback, callbackQuery));
-                    }
-                    case GET_DESC -> {
-                        sendMessage(profileRegistrationService.setProfileGenderSearch(chatId, callbackQuery));
-                        SendPhoto sendPhoto = profileRegistrationService.finishRegister(chatId, userSettingsFromCallback);
-                        ButtonKeyboard.getButtonKeyboard("menu", sendPhoto);
-                        sendMessage(sendPhoto);
-                        sendMessage(chatId, "Ваш профиль сохранён!\nМожем приступить.");
-                    }
+            Long chatId = Utils.getUserChatId(update);
+            Settings userSettings = getUserSettings(chatId);
+            String messageText = Utils.getUserMessageText(update);
+            if (userSettings.getState().equals(UserStates.REGISTRATION)) {
+                sendMessage(profileRegistrationService.profileRegistration(chatId, userSettings, messageText));
+                if(userSettings.getRegistrationsState().equals(RegistrationsStates.GET_PROFILE)) {
+                    sendPhoto(profileRegistrationService.profileRegistration(chatId, userSettings));
                 }
-            } else if (update.hasMessage()) {
-
-                Long chatId = update.getMessage().getChatId();
-                Settings userSettingsFromMessage = getUserSettings(chatId);
-                Message message = update.getMessage();
-
-                switch (userSettingsFromMessage.getRegistrationsState()) {
-                    case GET_NAME -> {
-                        sendMessage(profileRegistrationService.setProfileName(chatId, userSettingsFromMessage, message));
-                    }
-                    case GET_DESC -> {
-                        sendMessage(profileRegistrationService.setProfileDescription(chatId, userSettingsFromMessage, message));
-                    }
-                }
-
-            } else {
+            } else
                 log.info("Not supported yet");
-            }
-        }
-    }
-
-    public void sendMessage(Long chatId, String text) {
-        SendMessage answer = new SendMessage();
-        answer.setText(text);
-        answer.setChatId(chatId.toString());
-        try {
-            execute(answer);
-        } catch (TelegramApiException e) {
-            log.error(String.format("Ошибка %s. Сообщение, не являющееся командой. Пользователь: %s", e.getMessage(),
-                    chatId));
-            e.printStackTrace();
         }
     }
 
@@ -169,12 +124,12 @@ public class Bot extends TelegramLongPollingCommandBot {
         }
     }
 
-    public void sendMessage(SendPhoto sendMessage) {
+    public void sendPhoto(SendPhoto sendPhoto) {
         try {
-            execute(sendMessage);
+            execute(sendPhoto);
         } catch (TelegramApiException e) {
             log.error(String.format("Ошибка %s. Сообщение, не являющееся командой. Пользователь: %s", e.getMessage(),
-                    sendMessage.getChatId()));
+                    sendPhoto.getChatId()));
             e.printStackTrace();
         }
     }

@@ -5,6 +5,7 @@ public enum RegistrationsStates {
     GET_GENDER,
     GET_NAME,
     GET_DESC,
-    GET_LOVER_GENDER,
-    REGISTERED;
+    GET_GENDER_SEARCH,
+    GET_PROFILE,
+    REGISTERED
 }

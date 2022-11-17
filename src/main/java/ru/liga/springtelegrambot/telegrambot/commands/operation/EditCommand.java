@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.liga.springtelegrambot.telegrambot.Bot;
+import ru.liga.springtelegrambot.telegrambot.commands.buttons.inlinebuttons.InlineKeyboard;
 import ru.liga.springtelegrambot.telegrambot.commands.service.ServiceCommand;
 import ru.liga.springtelegrambot.telegrambot.data.ProfileRegistrationService;
 import ru.liga.springtelegrambot.telegrambot.data.RegistrationsStates;
@@ -20,13 +21,12 @@ import ru.liga.springtelegrambot.telegrambot.utils.Utils;
 @Component
 public class EditCommand extends ServiceCommand {
 
-    private final ProfileRegistrationService profileRegistrationService;
+    @Autowired
+    private InlineKeyboard inlineKeyboard;
 
     public EditCommand(@Value("edit") String identifier,
-                       @Value("Редактировать") String description,
-                       @Autowired ProfileRegistrationService profileRegistrationService) {
+                       @Value("Редактировать") String description) {
         super(identifier, description);
-        this.profileRegistrationService = profileRegistrationService;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class EditCommand extends ServiceCommand {
         userSettings.setState(UserStates.UNREGISTERED);
         userSettings.setRegistrationsState(RegistrationsStates.NOT_REGISTERED);
         if (userSettings.getState().equals(UserStates.UNREGISTERED)) {
-            SendMessage message = profileRegistrationService.setInlineButtons(userSettings, chat.getId());
+            SendMessage message = inlineKeyboard.setInlineButtons(userSettings, chat.getId());
             try {
                 absSender.execute(message);
             } catch (TelegramApiException e) {
