@@ -35,7 +35,7 @@ public class StartCommand extends ServiceCommand {
         userSettings.setState(UserStates.UNREGISTERED);
         userSettings.setRegistrationsState(RegistrationsStates.NOT_REGISTERED);
         if (userSettings.getState().equals(UserStates.UNREGISTERED)) {
-            SendMessage message = profileRegistrationService.registration(userSettings, chat.getId());
+            SendMessage message = profileRegistrationService.setInlineButtons(userSettings, chat.getId());
             try {
                 absSender.execute(message);
             } catch (TelegramApiException e) {

@@ -16,7 +16,7 @@ import ru.liga.springtelegrambot.telegrambot.commands.operation.*;
 import ru.liga.springtelegrambot.telegrambot.commands.service.HelpCommand;
 import ru.liga.springtelegrambot.telegrambot.commands.service.StartCommand;
 import ru.liga.springtelegrambot.telegrambot.config.BotConfig;
-import ru.liga.springtelegrambot.telegrambot.client.feign.FeignServer;
+import ru.liga.springtelegrambot.telegrambot.client.FeignServer;
 import ru.liga.springtelegrambot.telegrambot.data.*;
 import ru.liga.springtelegrambot.telegrambot.utils.ByteToImage;
 
@@ -37,7 +37,7 @@ public class Bot extends TelegramLongPollingCommandBot {
     private RowProfile rowProfile;
 
     @Autowired
-    private NonCommand nonCommand;
+    private ProfileRegistrationService profileRegistrationService;
 
 
     @Getter
@@ -112,14 +112,14 @@ public class Bot extends TelegramLongPollingCommandBot {
 
                 switch (userSettingsFromCallback.getRegistrationsState()) {
                     case NOT_REGISTERED -> {
-                        sendMessage(nonCommand.getProfileRegistrationService(chatId, userSettingsFromCallback, callbackQuery));
+                        sendMessage(profileRegistrationService.setProfileId(chatId, userSettingsFromCallback, callbackQuery));
                     }
                     case GET_GENDER -> {
-                        sendMessage(nonCommand.setProfileGender(chatId, userSettingsFromCallback, callbackQuery));
+                        sendMessage(profileRegistrationService.setProfileGender(chatId, userSettingsFromCallback, callbackQuery));
                     }
                     case GET_DESC -> {
-                        sendMessage(nonCommand.setProfileGenderSearch(chatId, callbackQuery));
-                        SendPhoto sendPhoto = nonCommand.finishRegister(chatId, userSettingsFromCallback);
+                        sendMessage(profileRegistrationService.setProfileGenderSearch(chatId, callbackQuery));
+                        SendPhoto sendPhoto = profileRegistrationService.finishRegister(chatId, userSettingsFromCallback);
                         ButtonKeyboard.getButtonKeyboard("menu", sendPhoto);
                         sendMessage(sendPhoto);
                         sendMessage(chatId, "Ваш профиль сохранён!\nМожем приступить.");
@@ -133,10 +133,10 @@ public class Bot extends TelegramLongPollingCommandBot {
 
                 switch (userSettingsFromMessage.getRegistrationsState()) {
                     case GET_NAME -> {
-                        sendMessage(nonCommand.setProfileName(chatId, userSettingsFromMessage, message));
+                        sendMessage(profileRegistrationService.setProfileName(chatId, userSettingsFromMessage, message));
                     }
                     case GET_DESC -> {
-                        sendMessage(nonCommand.setProfileDescription(chatId, userSettingsFromMessage, message));
+                        sendMessage(profileRegistrationService.setProfileDescription(chatId, userSettingsFromMessage, message));
                     }
                 }
 

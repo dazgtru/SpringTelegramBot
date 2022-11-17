@@ -1,4 +1,4 @@
-package ru.liga.springtelegrambot.telegrambot.client.feign;
+package ru.liga.springtelegrambot.telegrambot.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;

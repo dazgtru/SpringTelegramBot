@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.liga.springtelegrambot.telegrambot.client.feign.FeignServer;
+import ru.liga.springtelegrambot.telegrambot.client.FeignServer;
 import ru.liga.springtelegrambot.telegrambot.commands.buttons.ButtonKeyboard;
 import ru.liga.springtelegrambot.telegrambot.utils.ByteToImage;
 
